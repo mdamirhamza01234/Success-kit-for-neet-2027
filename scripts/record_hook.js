@@ -75,6 +75,31 @@
     document.body.appendChild(b);
   }
 
+  // Exam lock (Android screen pinning): while "auto submit" is ticked and the test may not be left yet
+  // (not all questions attempted OR less than 2/3 of the time over), the home / recents swipe and the
+  // navigation bar are blocked too. It is released as soon as the rule allows leaving, or the test is submitted.
+  var lockOn = false;
+  function lockPlugin() {
+    try {
+      var C = window.Capacitor;
+      if (C && C.isPluginAvailable && C.isPluginAvailable('ExamLock')) return C.Plugins.ExamLock;
+    } catch (e) {}
+    return null;
+  }
+  function setLock(on) {
+    var L = lockPlugin(); if (!L) return;
+    lockOn = on;
+    try { (on ? L.start() : L.stop()).catch(function () {}); } catch (e) {}
+    if (on) hookToast('Exam lock ON: home / recents band hain. Test poora hone par khulega.');
+  }
+  setInterval(function () {
+    var as = null;
+    try { as = window.__asState && window.__asState(); } catch (e) {}
+    var need = !!(as && as.on && as.started && !as.done && !saved && !as.ok);
+    if (need !== lockOn) setLock(need);
+  }, 1000);
+  window.addEventListener('pagehide', function () { if (lockOn) { var L = lockPlugin(); try { L && L.stop(); } catch (e) {} } });
+
   // Back button: ask before leaving a running test
   try { history.pushState({ mst: 1 }, ''); } catch (e) {}
   function hookToast(m) {

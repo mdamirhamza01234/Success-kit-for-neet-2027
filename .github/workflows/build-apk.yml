@@ -38,18 +38,20 @@ jobs:
           npx cap add android
           npx cap sync android
 
-      - name: Add on-device Gemma plugin
+      - name: Add native plugins (exam lock + on-device Gemma)
         run: |
+          D=android/app/src/main/java/com/sk/successkit
+          mkdir -p "$D"
+          # exam lock (screen pinning while a mock test with auto submit runs) - always added
+          cp native/ExamLockPlugin.java "$D/"
           if [ -f native/GemmaPlugin.java ] && [ -f native/MainActivity.java ]; then
-            D=android/app/src/main/java/com/sk/successkit
-            mkdir -p "$D"
-            cp "$D/MainActivity.java" MainActivity.orig 2>/dev/null || true
             cp native/GemmaPlugin.java native/MainActivity.java "$D/"
             sed -i '0,/^dependencies {/s//dependencies {\n    implementation "com.google.mediapipe:tasks-genai:0.10.+"/' android/app/build.gradle
             sed -i -E 's/minSdkVersion = [0-9]+/minSdkVersion = 26/' android/variables.gradle
-            echo "Gemma plugin added"
+            echo "Exam lock + Gemma plugin added"
           else
-            echo "::warning::native/GemmaPlugin.java ya MainActivity.java nahi mili - offline Gemma plugin skip"
+            cp native/MainActivity.lockonly.java "$D/MainActivity.java"
+            echo "::warning::native/GemmaPlugin.java ya MainActivity.java nahi mili - offline Gemma plugin skip, exam lock added"
           fi
 
       - name: More memory for Gradle (big mock tests)
@@ -89,7 +91,7 @@ jobs:
             echo "::warning::Gemma plugin ke saath build fail hua - plugin ke bina dobara build kar raha hoon"
             D=app/src/main/java/com/sk/successkit
             rm -f "$D/GemmaPlugin.java"
-            if [ -f ../MainActivity.orig ]; then cp ../MainActivity.orig "$D/MainActivity.java"; fi
+            cp ../native/MainActivity.lockonly.java "$D/MainActivity.java"
             sed -i '/tasks-genai/d' app/build.gradle
             ./gradlew assembleDebug --no-daemon
           fi

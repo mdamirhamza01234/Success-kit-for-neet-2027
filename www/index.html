@@ -820,6 +820,7 @@ function buildSets(){
   $('cMock').textContent = count('mock');
   renderAll();
 }
+try { if(window.Capacitor && Capacitor.isPluginAvailable && Capacitor.isPluginAvailable('ExamLock')) Capacitor.Plugins.ExamLock.stop().catch(function(){}); } catch(e){}   // never stay pinned on the home page
 buildSets();   // show the 16 cards at once, the real links arrive a moment later
 fetch('files/manifest.json')
   .then(r => r.ok ? r.json() : {})
