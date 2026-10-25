@@ -51,6 +51,13 @@ PATCH = (
 )
 ANCHOR = re.compile(r"function finishTest\s*\(\s*\)\s*\{")
 
+# The mock has an "auto submit" tick on its start screen. While it is ticked the test may only be left
+# (Submit button OR the phone's back button) after ALL questions are attempted AND 2/3 of the time is over.
+# The rule lives inside the mock, so this line exposes it to record_hook.js (back button).
+AS_ANCHOR = "setInterval(function(){if(!on||done||!started())return;var v=secs();"
+AS_EXPOSE = ("window.__asState=function(){var g=gate(),l;try{l=timeLeft}catch(e){}"
+             "return {on:on,done:done,started:started(),ok:!!g.ok||l===0,m:g.m||''}};")
+
 
 def copy_mock(src, dst):
     with open(os.path.join(ROOT, "scripts", "record_hook.js"), encoding="utf-8") as f:
@@ -63,6 +70,8 @@ def copy_mock(src, dst):
         if m and "const DATA" in html and "subjectRanges" in html:
             html = html[: m.end()] + PATCH + html[m.end():]
             ok = True
+        if AS_ANCHOR in html and "window.__asState" not in html:
+            html = html.replace(AS_ANCHOR, AS_EXPOSE + AS_ANCHOR, 1)
         tag = '<script id="mst-hook">\n' + hook + "\n</script>\n"
         i = html.lower().rfind("</body>")
         html = html[:i] + tag + html[i:] if i != -1 else html + "\n" + tag

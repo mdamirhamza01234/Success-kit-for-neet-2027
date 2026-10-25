@@ -77,7 +77,28 @@
 
   // Back button: ask before leaving a running test
   try { history.pushState({ mst: 1 }, ''); } catch (e) {}
+  function hookToast(m) {
+    var el = document.getElementById('mst-toast');
+    if (!el) {
+      el = document.createElement('div'); el.id = 'mst-toast';
+      el.style.cssText = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:2147483647;max-width:86vw;' +
+        'padding:11px 16px;border-radius:12px;background:rgba(10,29,20,.96);border:1px solid rgba(250,204,21,.55);color:#fff;' +
+        'font:600 13.5px/1.4 system-ui,sans-serif;text-align:center;box-shadow:0 10px 28px rgba(0,0,0,.5)';
+      document.body.appendChild(el);
+    }
+    el.textContent = m; el.style.display = 'block';
+    clearTimeout(hookToast.t); hookToast.t = setTimeout(function () { el.style.display = 'none'; }, 3200);
+  }
   window.addEventListener('popstate', function () {
+    // "auto submit" ticked: the test cannot be left (back / swipe) until all questions are attempted
+    // AND 2/3 of the time is over. Same rule as the Submit button.
+    var as = null;
+    try { as = window.__asState && window.__asState(); } catch (e) { as = null; }
+    if (as && as.on && as.started && !as.done && !saved && !as.ok) {
+      try { history.pushState({ mst: 1 }, ''); } catch (e) {}
+      hookToast(as.m || 'Auto submit ON: test abhi band nahi ho sakta.');
+      return;
+    }
     if (started && !saved) {
       if (!confirm('Leave the test? Your progress will be lost.')) {
         try { history.pushState({ mst: 1 }, ''); } catch (e) {}
