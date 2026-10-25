@@ -11,6 +11,7 @@ Papers, solutions aur mock tests APK ke andar bundle hote hain, isliye bina inte
   - Online: **Gemini** (naya model pehle, apne aap fallback). Offline: phone par chalne wala **Gemma 3 1B**.
   - Dono ke jawab mein **LaTeX math** (KaTeX) aur chemistry (`\ce{}`) proper dikhta hai, bina internet ke bhi.
   - PDF viewer mein page ki photo Gemini ko jaati hai (diagram / options samajhne ke liye). Photo bhejne ka option home chat mein bhi hai.
+- **AI ko app ka data pata hai:** marks, subject-wise score, kaun se questions galat/skip hue, aur chapter-wise sawal (jaise "5 tests mein animal kingdom ke sawal"). Chapter tags build ke time keywords se apne aap bante hain, kabhi-kabhi thode galat ho sakte hain. Marks/galat sawal tabhi pata chalte hain jab mock submit ho chuka ho. Gemma 1B ko chhota context milta hai.
 - Mock test submit karte hi result **Test Records** mein save: score, subject-wise marks, har question ka jawab, time.
 
 ## files/ folder ke naam (build script yahi pehchanti hai)

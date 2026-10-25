@@ -15,6 +15,8 @@ import re
 import shutil
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "files")
 OUT = os.path.join(ROOT, "www", "files")
@@ -119,6 +121,13 @@ def main():
 
     with open(os.path.join(OUT, "manifest.json"), "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
+
+    # question bank + chapter tags for the AI chatbot (never stops the build)
+    try:
+        import build_kb
+        build_kb.build(SRC, OUT, classify)
+    except Exception as e:  # noqa: BLE001
+        print("WARNING: kb.json (AI question bank) could not be built: %s" % e)
 
     for (n, kind), ok in sorted(patched.items()):
         if not ok:

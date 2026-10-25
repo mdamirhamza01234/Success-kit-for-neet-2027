@@ -399,6 +399,11 @@
     return '<start_of_turn>user\n' + G_RULES + (ctx ? '\n\nCONTEXT:\n' + ctx : '') + '\n\nQuestion: ' + q + '<end_of_turn>\n<start_of_turn>model\n';
   }
 
+  /* the student's own marks / mistakes / question bank (sk-data.js); '' when the question is not about their data */
+  async function studentData(q, kind) {
+    try { return window.SKData ? (await window.SKData.context(q, kind)) || '' : ''; } catch (e) { return ''; }
+  }
+
   /* ================= engine choice + one call that does everything ================= */
   async function engineInfo(hasImg) {
     var S = settings(), online = navigator.onLine !== false, dev = await Gemma.hasModel(), eng = 'none';
@@ -425,7 +430,8 @@
       past = past.slice(-6);
       var msgs = past.concat([{ role: 'user', text: o.q, img: o.img || null }]);
       try {
-        var g = await askGemini(RULES + (o.sys ? '\n\n' + o.sys : ''), msgs, onText, thinkPlan(o.q, !!o.img));
+        var dcG = await studentData(o.q, 'gemini');
+        var g = await askGemini(RULES + (o.sys ? '\n\n' + o.sys : '') + (dcG ? '\n\n' + dcG : ''), msgs, onText, thinkPlan(o.q, !!o.img));
         return { text: g.text, label: 'Gemini · ' + g.model };
       } catch (e) {
         if (!(S.mode === 'auto' && !o.img && !isKeyErr(e) && info.device)) throw e;
@@ -434,7 +440,8 @@
     }
     if (o.onStage) o.onStage('Gemma soch raha hai…');
     await Gemma.ensure();
-    var text = await Gemma.generate(gemmaPrompt(o.ctx, o.q), onText);
+    var dcD = await studentData(o.q, 'device');
+    var text = await Gemma.generate(gemmaPrompt([dcD, o.ctx].filter(Boolean).join('\n\n'), o.q), onText);
     if (!text) throw uerr('Khaali jawab aaya.');
     return { text: text, label: 'Gemma · on-device' };
   }

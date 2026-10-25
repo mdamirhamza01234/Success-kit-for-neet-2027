@@ -475,6 +475,7 @@
 
 <script src="libs/katex/katex.min.js"></script>
 <script src="libs/katex/mhchem.min.js"></script>
+<script src="sk-data.js"></script>
 <script src="ai-core.js"></script>
 <script>
 const iconPaper = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>';
@@ -729,9 +730,9 @@ function addMsg(role, text, m){
   chatEl.appendChild(d); return d;
 }
 function welcome(){
-  addMsg('ai', 'Namaste! Main **SK AI** hun, tumhara NEET tutor. Physics, Chemistry, Botany, Zoology ka koi bhi sawal pucho, ya kisi question ki **photo** bhejo. Formulas aur reactions proper math mein dikhenge, jaise $v = u + at$ aur $\\ce{2H2 + O2 -> 2H2O}$.');
+  addMsg('ai', 'Namaste! Main **SK AI** hun, tumhara NEET tutor. Physics, Chemistry, Botany, Zoology ka koi bhi sawal pucho, ya kisi question ki **photo** bhejo. Main tumhare **test marks, galat questions aur chapter-wise sawal** bhi jaanta hun, jaise \"Test 3 mein kaun se sawal galat hue?\" ya \"Animal Kingdom ke sawal in 5 tests mein batao\". Formulas aur reactions proper math mein dikhenge, jaise $v = u + at$ aur $\\ce{2H2 + O2 -> 2H2O}$.');
   const wrap = document.createElement('div'); wrap.className = 'suggest'; wrap.id = 'suggest';
-  ['Newton ke teeno laws samjhao', 'Mole concept ke important formulas', 'Photosynthesis ka diagram banao', 'Projectile motion ka range formula derive karo'].forEach(t => {
+  ['Mere sabhi tests ke marks batao', 'Test 5 mein kaun se questions galat hue?', 'Animal Kingdom ke sawal in 5 tests mein batao', 'Mere weak chapters kaun se hain?', 'Newton ke teeno laws samjhao'].forEach(t => {
     const b = document.createElement('button'); b.type = 'button'; b.textContent = t;
     b.addEventListener('click', () => { aiInput.value = t; askAI(); }); wrap.appendChild(b);
   });
