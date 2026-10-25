@@ -1,0 +1,11 @@
+{
+  "appId": "com.sk.successkit",
+  "appName": "Success Kit",
+  "webDir": "www",
+  "backgroundColor": "#06120d",
+  "server": { "androidScheme": "https" },
+  "android": {
+    "backgroundColor": "#06120d",
+    "adjustMarginsForEdgeToEdge": "auto"
+  }
+}
