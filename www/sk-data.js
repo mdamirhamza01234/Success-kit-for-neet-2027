@@ -64,10 +64,14 @@
     var ordw = { pehla: 1, pehle: 1, first: 1, dusra: 2, dusre: 2, doosra: 2, second: 2, teesra: 3, teesre: 3, third: 3, chautha: 4, chauthe: 4, fourth: 4, panchva: 5, panchwa: 5, paanchva: 5, fifth: 5 };
     re = /\b(pehla|pehle|first|dusra|dusre|doosra|second|teesra|teesre|third|chautha|chauthe|fourth|panchva|panchwa|paanchva|fifth)\s+(?:test|mock|paper)/g;
     while ((m = re.exec(t))) { var n3 = ordw[m[1]]; if (n3 && P.tests.indexOf(n3) < 0) P.tests.push(n3); }
+    var tq = t.replace(/(?:test|mock|paper|success\s*kit)\s*(?:no\.?|number|#|-)?\s*0?\d{1,2}\s*(?:st|nd|rd|th|va|wa|wen|ve|vi)?\b/g, ' TESTREF ').replace(/\b0?\d{1,2}\s*(?:st|nd|rd|th|va|wa|wen|ve|vi)?\s*(?:test|mock|paper)\b/g, ' TESTREF ');
+    var ordq = { pehla: 1, pehle: 1, first: 1, dusra: 2, dusre: 2, second: 2, teesra: 3, third: 3, chautha: 4, fourth: 4, panchva: 5, fifth: 5 };
     re = /\b(?:q|que|ques|question|qn|prashn|sawal|savaal)\.?\s*(?:no\.?|number|num|#)?\s*0?(\d{1,3})\b/g;
-    while ((m = re.exec(t))) { var qn = +m[1]; if (qn >= 1 && qn <= 200 && P.qnos.indexOf(qn) < 0) P.qnos.push(qn); }
-    re = /\b0?(\d{1,3})\s*(?:st|nd|rd|th|va|wa|wen|ve|vi|number|no\.?)?\s*(?:question|sawal|savaal|prashn)\b/g;
-    while ((m = re.exec(t))) { var qn2 = +m[1]; if (qn2 >= 1 && qn2 <= 200 && P.qnos.indexOf(qn2) < 0 && P.tests.indexOf(qn2) < 0) P.qnos.push(qn2); }
+    while ((m = re.exec(tq))) { var qn = +m[1]; if (qn >= 1 && qn <= 200 && P.qnos.indexOf(qn) < 0) P.qnos.push(qn); }
+    re = /\b0?(\d{1,3})\s*(?:st|nd|rd|th|va|wa|wen|ve|vi|number|no\.?)?\s*(?:question|sawal|savaal|prashn|q)\b/g;
+    while ((m = re.exec(tq))) { var qn2 = +m[1]; if (qn2 >= 1 && qn2 <= 200 && P.qnos.indexOf(qn2) < 0) P.qnos.push(qn2); }
+    re = /\b(pehla|pehle|first|dusra|dusre|second|teesra|third|chautha|fourth|panchva|fifth)\s+(?:question|sawal|savaal|prashn)/g;
+    while ((m = re.exec(tq))) { var qn3 = ordq[m[1]]; if (qn3 && P.qnos.indexOf(qn3) < 0) P.qnos.push(qn3); }
 
     P.allTests = /\b(all|saare|sare|sabhi|pachon|panchon|paanchon|paanch|panch|five|every|har)\b[^.?!]{0,16}\b(tests?|mock|papers?)\b|\b(tests?|mock|papers?)\b[^.?!]{0,10}\b(all|saare|sabhi|combined|total|overall)\b|\b5\s*tests?\b|\bin\s+(?:in\s+)?(?:pa(?:n)?ch|paanch)\b/.test(t);
     P.personal = /\b(mera|mere|meri|mujhe|mujhse|maine|mai|main|my|me|i|hamara|humne|apna|apne)\b/.test(t);
@@ -144,7 +148,8 @@
   }
 
   function testDetail(kb, n, att, P, G) {
-    var cap = G ? 45 : 8, snip = G ? 170 : 80, out = [];
+    var cap = G ? 45 : 8, snip = FULL ? (G ? 700 : 260) : (G ? 170 : 80), out = [];
+    if (FULL) cap = G ? 12 : 3;
     if (!att) { out.push(TN(n) + ': not attempted yet, so there are no mistakes to show.'); return out; }
     var wrong = [], skipped = [], right = [];
     att.qs.forEach(function (row) { var v = verdict(row); (v === 'r' ? wrong : v === 's' ? skipped : right).push(row); });
@@ -178,7 +183,8 @@
   }
 
   function chapterList(kb, byTest, P, G, chapIdx, testsFilter) {
-    var out = [], cap = G ? 85 : 8, snip = G ? 190 : 85, found = [], counts = { g: 0, r: 0, s: 0, n: 0 };
+    var out = [], cap = G ? 85 : 8, snip = FULL ? (G ? 600 : 240) : (G ? 190 : 85), found = [], counts = { g: 0, r: 0, s: 0, n: 0 };
+    if (FULL) cap = G ? 15 : 3;
     var nums = Object.keys(kb.tests).map(Number).sort(function (a, b) { return a - b; });
     nums.forEach(function (n) {
       if (testsFilter.length && testsFilter.indexOf(n) < 0) return;
@@ -268,7 +274,9 @@
     return text.slice(0, cutAt > max * 0.6 ? cutAt : max) + '\n…(trimmed)';
   }
 
+  var FULL = false;
   async function context(q, engine) {
+    FULL = /likho|likh\b|write|dikha|dikhao|batao|bata\b|show|paste|copy|text|poora|full|puri|pura|read|padh|solve|explain|samjha/.test(String(q).toLowerCase());
     var G = engine === 'gemini';
     var kb = await loadKB();
     var P = parse(q, kb);
@@ -281,6 +289,7 @@
       L.push("=== STUDENT'S APP DATA (read from this phone just now; authoritative) ===");
       L.push('Marking: +4 right, -1 wrong, 0 skipped; 180 questions and 720 marks per test. "Test 03" means "Success Kit Test 03" in the app. Subject labels follow the paper order (Q1-45 Physics, 46-90 Chemistry, 91-135 Botany, 136-180 Zoology). ' +
         'USE THIS DATA to answer questions about the student\'s marks, mistakes and which questions belong to a chapter. Quote test and question numbers exactly as written here (e.g. "Test 03 Q153"). Where the data says right / wrong / skipped, tell the student that. ' +
+        'The full question text and options ARE included below for the questions concerned: when asked to show, write or solve a question, write it out (formulas in $...$) and give the answer; never say you cannot access the questions. ' +
         'If the data does not contain what is asked, say so plainly; never invent marks or question numbers. If a test is "not attempted", tell the student to take it first.');
     } else {
       L.push('STUDENT DATA (from the app; answer only from this):');

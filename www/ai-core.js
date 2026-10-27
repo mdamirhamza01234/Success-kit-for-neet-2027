@@ -431,6 +431,7 @@
       var msgs = past.concat([{ role: 'user', text: o.q, img: o.img || null }]);
       try {
         var dcG = await studentData(o.q, 'gemini');
+        if (!dcG && past.length) { var lastU = past[past.length - 1 - 1]; if (lastU && lastU.text) dcG = await studentData(lastU.text + ' . ' + o.q, 'gemini'); }
         var g = await askGemini(RULES + (o.sys ? '\n\n' + o.sys : '') + (dcG ? '\n\n' + dcG : ''), msgs, onText, thinkPlan(o.q, !!o.img));
         return { text: g.text, label: 'Gemini · ' + g.model };
       } catch (e) {
