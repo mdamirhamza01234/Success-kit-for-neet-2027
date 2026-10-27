@@ -87,6 +87,9 @@
   .search-shell input::placeholder{color:var(--ink-faint);}
 
   main{max-width:720px; margin:0 auto; padding:8px 22px 40px; display:flex; flex-direction:column; gap:16px;}
+
+  .lede.quote{white-space:pre-line; font-size:16px; line-height:1.6; font-style:italic;}
+  .lede.quote small{display:block; margin-top:8px; font-style:normal; font-size:13px; color:var(--gold); font-weight:700;}
   .card{
     background:var(--card); border:1px solid var(--card-line); border-left:5px solid var(--pri); border-radius:8px 18px 18px 8px; padding:18px 16px 16px;
     transition:background .18s ease, border-color .18s ease;
@@ -387,7 +390,7 @@
       PW &middot; NEET Success Kit 2026-27
     </span>
     <h1 class="display">Test. Review.<br><span class="grad">Succeed.</span></h1>
-    <p class="lede">NEET Success Kit tests &mdash; every test has its question paper, solutions and a live mock test, all saved inside the app. Stuck anywhere? Ask the AI.</p>
+    <p class="lede quote" id="dailyQuote"></p>
 
     <div class="metric-row fit">
       <div class="metric"><b id="cPaper">0</b><span>Question papers</span></div>
@@ -828,6 +831,19 @@ fetch('files/manifest.json')
   .catch(() => ({}))
   .then(m => { manifest = m || {}; buildSets(); });
 renderRecords();
+</script>
+
+<script>
+(function(){
+  var Q=[["सच है, विपत्ति जब आती है,\nकायर को ही दहलाती है,\nसूरमा नहीं विचलित होते,\nक्षण एक नहीं धीरज खोते,\nविघ्नों को गले लगाते हैं,\nकाँटों में राह बनाते हैं", "रामधारी सिंह 'दिनकर'"], ["मैदान में हारा हुआ इंसान फिर से जीत सकता है, लेकिन मन से हारा हुआ इंसान कभी नहीं जीत सकता।", ""], ["अगर आप कुछ ऐसा पाना चाहते हैं जो आपने पहले कभी नहीं पाया, तो आपको कुछ ऐसा करना होगा जो आपने पहले कभी नहीं किया।", ""], ["लक्ष्य बड़ा है तो संघर्ष भी बड़ा होगा, पर याद रखना जब जीत होगी तो शोर भी उतना ही बड़ा होगा।", ""], ["जीतने का असली मज़ा तब है, जब सब आपके हारने का इंतज़ार कर रहे हों। उठो, लड़ो और साबित करो!", ""], ["किस्मत की लकीरें भी रास्ता बदल देती हैं, जब आपके इरादों में जिद और मेहनत का खून दौड़ता है।", ""], ["आज का संघर्ष कल की सफलता की कहानी लिखेगा; जब लोग आपकी मेहनत पर उंगली उठाएं, तो आप सीधे रिजल्ट से जवाब देना।", ""], ["वक्त से लड़कर जो नसीब बदल दे, इंसान वही जो अपनी तकदीर बदल दे; कल क्या होगा कभी मत सोचो, क्या पता कल वक्त खुद अपनी तस्वीर बदल दे।", ""], ["मेहनत इतनी खामोशी से करो, कि सफलता शोर मचा दे।", ""], ["जब भी थकने लगो तो बस एक बार आँखें बंद करके सोचना कि जब नाम के आगे 'Dr.' लगेगा, तो वो पल कैसा होगा।", ""], ["अगर Physics का न्यूमेरिकल उलझा रहा है, तो पैनिक मत होना। गहरी सांस लो; मुश्किल सवाल सिर्फ आपका हौसला चेक करने आते हैं।", ""], ["हर एक सही सवाल आपको आपके सपनों के मेडिकल कॉलेज (AIIMS, MAMC, KGMU) के गेट के और करीब ले जा रहा है।", ""], ["सिर्फ एक टेस्ट आपकी किस्मत तय नहीं कर सकता, लेकिन इस टेस्ट की एक-एक गलती आपको टॉपर बनाने का दम रखती है।", ""], ["डॉक्टर बनने की राह में थकना मना है; जब भी हिम्मत टूटे, अपने माता-पिता की आँखों में छिपे उस गर्व के आंसुओं को याद कर लेना।", ""], ["नींद से इतना भी प्यार न करो कि आपका लक्ष्य सिर्फ एक ख्वाब बनकर रह जाए; जागते रहो, लड़ते रहो, क्योंकि एप्रन पहनने की खुशी इस नींद से हजार गुना बेहतर होगी।", ""], ["रुकना नहीं है तुम्हें, अभी तो पूरा आसमान बाकी है।", ""], ["ठोकरें गिरा नहीं सकतीं, अगर जीतने की जिद हो।", ""], ["सपना तुम्हारा है, तो इसे पूरा भी तुम ही करोगे।", ""], ["जिद जीतो, इतिहास बदलो।", ""], ["चुपचाप मेहनत, सीधा सिलेक्शन।", ""], ["अबकी बार, medical college पार।", ""], ["परिंदों को मंज़िल मिलेगी यक़ीनन, ये फैले हुए उनके पर बोलते हैं; वो लोग रहते हैं ख़ामोश अक्सर, ज़माने में जिनके हुनर बोलते हैं।", "डॉ. एपीजे अब्दुल कलाम"], ["ख़ुदी को कर बुलंद इतना कि हर तक़दीर से पहले, ख़ुदा बंदे से ख़ुद पूछे बता तेरी रज़ा क्या है।", "अल्लामा इक़बाल"], ["मन के हारे हार है, मन के जीते जीत।", "महात्मा गांधी"], ["रंज से ख़ूगर हुआ इंसाँ तो मिट जाता है रंज, मुश्किलें मुझ पर पड़ीं इतनी कि आसाँ हो गईं।", "मिर्ज़ा ग़ालिब"], ["उठो, जागो और तब तक मत रुको जब तक लक्ष्य की प्राप्ति न हो जाए।", "स्वामी विवेकानंद"], ["मुश्किलें दिल के इरादे आज़माती हैं, स्वप्न के परदे निगाहों से हटाती हैं; हौसला मत हार गिरकर ओ मुसाफ़िर, ठोकरें इंसान को चलना सिखाती हैं।", "अनवर जलालपुरी"]];
+  var i=Math.floor(Math.random()*Q.length), last=-1;
+  try{ last=parseInt(localStorage.getItem('sk_quote_i')||'-1',10); }catch(e){}
+  if(Q.length>1 && i===last) i=(i+1+Math.floor(Math.random()*(Q.length-1)))%Q.length;
+  try{ localStorage.setItem('sk_quote_i',String(i)); }catch(e){}
+  var el=document.getElementById('dailyQuote'); if(!el) return;
+  el.textContent=''; var t=document.createElement('span'); t.textContent=Q[i][0]; el.appendChild(t);
+  if(Q[i][1]){ var a=document.createElement('small'); a.textContent='— '+Q[i][1]; el.appendChild(a); }
+})();
 </script>
 </body>
 </html>
