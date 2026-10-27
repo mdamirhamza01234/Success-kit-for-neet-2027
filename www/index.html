@@ -90,6 +90,9 @@
 
   .lede.quote{white-space:pre-line; font-size:16px; line-height:1.6; font-style:italic;}
   .lede.quote small{display:block; margin-top:8px; font-style:normal; font-size:13px; color:var(--gold); font-weight:700;}
+  .clockbox{display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin:0 0 14px; padding:10px 14px; border-radius:14px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);}
+  .clockbox b{font-family:var(--serif); font-size:26px; font-weight:800; color:var(--gold); letter-spacing:.02em; font-variant-numeric:tabular-nums;}
+  .clockbox span{white-space:pre-line; font-size:13px; font-weight:600; color:var(--ink-soft,#CFE8DC); text-align:right;}
   .card{
     background:var(--card); border:1px solid var(--card-line); border-left:5px solid var(--pri); border-radius:8px 18px 18px 8px; padding:18px 16px 16px;
     transition:background .18s ease, border-color .18s ease;
@@ -385,6 +388,7 @@
 <!-- ============ HOME ============ -->
 <div id="homeView">
   <header class="hero-h">
+    <div class="clockbox" id="clockBox"><b id="clkTime">--:--</b><span id="clkDate"></span></div>
     <span class="kicker">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3L21 9l-5 4.6L17.3 21 12 17.6 6.7 21 8 13.6 3 9l6.1-.7z"/></svg>
       PW &middot; NEET Success Kit 2026-27
@@ -843,6 +847,18 @@ renderRecords();
   var el=document.getElementById('dailyQuote'); if(!el) return;
   el.textContent=''; var t=document.createElement('span'); t.textContent=Q[i][0]; el.appendChild(t);
   if(Q[i][1]){ var a=document.createElement('small'); a.textContent='— '+Q[i][1]; el.appendChild(a); }
+})();
+</script>
+<script>
+(function(){
+  var D=['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'],M=['January','February','March','April','May','June','July','August','September','October','November','December'],E=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  function tick(){
+    var d=new Date(),h=d.getHours(),m=d.getMinutes(),ap=h>=12?'PM':'AM',h12=h%12||12;
+    var t=document.getElementById('clkTime'),c=document.getElementById('clkDate'); if(!t||!c) return;
+    t.textContent=h12+':'+(m<10?'0':'')+m+' '+ap;
+    c.textContent=E[d.getDay()]+' ('+D[d.getDay()]+')\n'+d.getDate()+' '+M[d.getMonth()]+' '+d.getFullYear();
+  }
+  tick(); setInterval(tick,15000); document.addEventListener('visibilitychange',tick);
 })();
 </script>
 </body>
